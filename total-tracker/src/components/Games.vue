@@ -1,7 +1,16 @@
 <template>
   <div>
+    <b-jumbotron>
+      <template #header>NBA Scoreboard ({{ currDate }})</template>
+
+      <hr class="my-4">
+
+      <p>
+        Source code and more info <a href="https://github.com/ktdemay/TotalTracker">here</a>.
+      </p>
+    </b-jumbotron>
+
     <b-table striped hover :items="games" :fields="fields">
-      
     </b-table>
   </div>
 </template>
@@ -9,7 +18,8 @@
 <script>
 export default {
   props: {
-    currGames: Array
+    currGames: Array,
+    currDate: String
   },
   data: function() {
     return {
@@ -72,12 +82,7 @@ export default {
     currGames: {
       immediate: true,
       handler() {
-        // console.log("before");
-        // console.log(this.games.slice(0));
-        // console.log(this.currGames);
         this.updateGames();
-        // console.log('after');
-        // console.log(this.games.slice(0));
       }
     }
   },
@@ -138,13 +143,8 @@ export default {
 </script>
 
 <style scoped>
-
+.jumbotron {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}
 </style>
-
-<!--
-  statusNum: 3 = Finished, 2 = In Progress, 1 = Not Yet Started
-  clock: Time
-  period -> current: Quarter
-  vteam -> score, triCode
-  hteam -> score, triCode
--->

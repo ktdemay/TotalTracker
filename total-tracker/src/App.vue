@@ -6,6 +6,7 @@
           <Games 
             v-if="games.length"
             :currGames="games"
+            :currDate="date"
           />
         </b-col>
       </b-row>
@@ -23,7 +24,7 @@ export default {
   data() {
     return {
       games: [],
-      index: 0
+      date: 0
     }
   },
   methods: {
@@ -32,6 +33,7 @@ export default {
       var utcDate = new Date(date.toUTCString());
       utcDate.setHours(utcDate.getHours()-8);
       var pstDate = new Date(utcDate);
+      this.date = (pstDate.getMonth()+1) + "/" + pstDate.getDate() + '/' + pstDate.getFullYear();
       pstDate = pstDate.toISOString().split('T')[0].replace(/-/g, '');
 
       var url = 'http://data.nba.net/10s/prod/v1/' + pstDate + '/scoreboard.json';
