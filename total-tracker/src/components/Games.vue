@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table striped hover :games="games" :fields="fields">
+    <b-table striped hover :items="games" :fields="fields">
       
     </b-table>
   </div>
@@ -81,9 +81,9 @@ export default {
       for(var i = 0; i < this.currGames.length; i++) {
         var game = this.currGames[i];
 
-        var vTeam = game.vTeam;
+        var vTeam = game.vTeam.triCode;
         var vScore = game.vTeam.score;
-        var hTeam = game.hTeam;
+        var hTeam = game.hTeam.triCode;
         var hScore = game.hTeam.score;
         var startTime = game.startTimeEastern;
         var status;
@@ -92,7 +92,7 @@ export default {
           case 2 : status = 'In Progress'; break;
           case 3 : status = 'Finished'; break;
         }
-        var total = vScore + hScore;
+        var total = parseInt(vScore) + parseInt(hScore);
         var projTotal = this.getProjTotal(total, game.period.current, game.clock);
 
         this.games[i] = {
@@ -106,13 +106,23 @@ export default {
           'total': total,
           'projTotal': projTotal
         }
+
+        // data.$set(this.games, i, gameEntry);
       }
+      console.log(this.games);
     },
     getProjTotal(currTotal, quarter, time) {
-      time = time.replace(' ', '');
-      var split = time.split(':');
-      var min = split[0];
-      var sec = split[1];
+      var min, sec;
+      if(time === '') {
+        min = 0;
+        sec = 0;
+      }
+      else {
+        time = time.replace(' ', '');
+        var split = time.split(':');
+        min = split[0];
+        sec = split[1];
+      }
 
       var timeLeft = parseInt(sec)/60;
       timeLeft += parseInt(min);
