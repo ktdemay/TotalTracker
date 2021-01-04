@@ -4,6 +4,7 @@
       <b-row>
         <b-col>
           <Games 
+            v-if="games.length"
             :currGames="games"
           />
         </b-col>
@@ -26,27 +27,30 @@ export default {
     }
   },
   methods: {
+    update() {
+      var date = new Date();
+      var utcDate = new Date(date.toUTCString());
+      utcDate.setHours(utcDate.getHours()-8);
+      var pstDate = new Date(utcDate);
+      pstDate = pstDate.toISOString().split('T')[0].replace(/-/g, '');
+
+      var url = 'http://data.nba.net/10s/prod/v1/' + pstDate + '/scoreboard.json';
+
+      fetch(url, {
+        method: 'get'
+      })
+        .then((response) => {
+          return response.json()
+        })
+        .then((jsonData) => {
+          this.games = jsonData.games.slice(0);
+          console.log(this.games)
+        })
+    }
   },
-  mounted: function() {
-    var date = new Date();
-    var utcDate = new Date(date.toUTCString());
-    utcDate.setHours(utcDate.getHours()-8);
-    var pstDate = new Date(utcDate);
-    pstDate = pstDate.toISOString().split('T')[0].replace(/-/g, '');
-
-    var url = 'http://data.nba.net/10s/prod/v1/' + pstDate + '/scoreboard.json';
-
-    fetch(url, {
-      method: 'get'
-    })
-      .then((response) => {
-        console.log(response);
-        return response.json()
-      })
-      .then((jsonData) => {
-        this.games = jsonData.games
-        console.log(this.games[0])
-      })
+  created: function() {
+    this.update();
+    setInterval(this.update, 60000);
   }
 }
 </script>

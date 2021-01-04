@@ -72,7 +72,12 @@ export default {
     currGames: {
       immediate: true,
       handler() {
-        this.updateGames()
+        // console.log("before");
+        // console.log(this.games.slice(0));
+        // console.log(this.currGames);
+        this.updateGames();
+        // console.log('after');
+        // console.log(this.games.slice(0));
       }
     }
   },
@@ -86,14 +91,15 @@ export default {
         var hTeam = game.hTeam.triCode;
         var hScore = game.hTeam.score;
         var startTime = game.startTimeEastern;
-        var status;
+        var status, total, projTotal;
         switch (game.statusNum) {
-          case 1 : status = 'Not Yet Started'; break;
-          case 2 : status = 'In Progress'; break;
-          case 3 : status = 'Finished'; break;
+          case 1 : status = 'Not Yet Started'; total = 0; projTotal = 0; break;
+          case 2 : status = 'In Progress'; /* falls through */
+          case 3 : status = 'Finished'; /* falls through */
+
+          total = parseInt(vScore) + parseInt(hScore);
+          projTotal = this.getProjTotal(total, game.period.current, game.clock);
         }
-        var total = parseInt(vScore) + parseInt(hScore);
-        var projTotal = this.getProjTotal(total, game.period.current, game.clock);
 
         this.games[i] = {
           'vTeam': vTeam,
@@ -106,10 +112,7 @@ export default {
           'total': total,
           'projTotal': projTotal
         }
-
-        // data.$set(this.games, i, gameEntry);
       }
-      console.log(this.games);
     },
     getProjTotal(currTotal, quarter, time) {
       var min, sec;
