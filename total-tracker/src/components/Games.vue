@@ -120,6 +120,9 @@ export default {
         }
         var total = parseInt(vScore) + parseInt(hScore);
         var quarter = game.competitions[0].status.period;
+        if(quarter > 4) {
+          quarter = 4;
+        }
         var time = game.competitions[0].status.displayClock;
         var projTotal = this.getProjTotal(total, quarter, time);
         var ou;
@@ -147,8 +150,16 @@ export default {
           'time': time,
           'total': total,
           'projTotal': projTotal,
-          'ou': ou
+          'ou': ou,
+          _cellVariants: {}
         }
+
+        var cellVariants = this.changed(updated, i);
+
+        if(cellVariants !== null) {
+          updated._cellVariants = cellVariants;
+        }
+        this.changed(updated, i);
 
         this.$set(this.games, i, updated);
       }
@@ -186,15 +197,73 @@ export default {
     },
     saveStorage(games) {
       localStorage.setItem('games', JSON.stringify(games));
+    },
+    changed(entry, index) {
+      var cellVariants = {};
+      var storedGames = this.openStorage();
+      if(storedGames[index] !== null) {
+        var game = storedGames[index];
+        var changed = false;
+
+        if(game.status !== entry.status) {
+          cellVariants['status'] = 'update';
+          changed = true;
+        }
+        if(game.vScore !== entry.vScore) {
+          cellVariants['vScore'] = 'update';
+          changed = true;
+        }
+        if(game.hScore !== entry.hScore) {
+          cellVariants['hScore'] = 'update';
+          changed = true;
+        }
+        if(game.quarter !== entry.quarter) {
+          cellVariants['quarter'] = 'update';
+          changed = true;
+        }
+        if(game.time !== entry.time) {
+          cellVariants['time'] = 'update';
+          changed = true;
+        }
+        if(game.total !== entry.total) {
+          cellVariants['total'] = 'update';
+          changed = true;
+        }
+        if(game.projTotal !== entry.projTotal) {
+          cellVariants['projTotal'] = 'update';
+          changed = true;
+        }
+        if(game.ou !== entry.ou) {
+          cellVariants['ou'] = 'update';
+          changed = true;
+        }
+        
+        if(changed) {
+          console.log(cellVariants);
+          return cellVariants;
+        }
+      }
+
+      return null;
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .jumbotron {
   padding-top: 2em;
   padding-bottom: 2em;
+}
+
+.table-update {
+  animation: 2s table-update;
+}
+
+@keyframes table-update {
+  0% {
+    background-color: #5cb85c;
+  }
 }
 </style>
 

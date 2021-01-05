@@ -47,7 +47,7 @@ export default {
         })
         .then((jsonData) => {
           this.games = jsonData.events.slice(0);
-          console.log(this.games);
+          // console.log(this.games);
         })
     }
   },
