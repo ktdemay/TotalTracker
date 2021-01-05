@@ -10,7 +10,7 @@
       </p>
     </b-jumbotron>
 
-    <b-table responsive striped hover :items="games" :fields="fields">
+    <b-table ref="table" responsive striped hover :items="games" :fields="fields">
     </b-table>
   </div>
 </template>
@@ -24,11 +24,6 @@ export default {
   data: function() {
     return {
       fields: [
-          // {
-          //   key: 'startTime',
-          //   label: 'Start Time',
-          //   sortable: true
-          // },
           {
             key: 'status',
             label: 'Status',
@@ -97,23 +92,32 @@ export default {
       }
     }
   },
+  created: function() {
+    const storedGames = this.openStorage();
+    if(storedGames) {
+      this.games = storedGames;
+    }
+  },
   methods: {
     updateGames() {
       for(var i = 0; i < this.currGames.length; i++) {
         var game = this.currGames[i];
 
         var vTeam = game.competitions[0].competitors[1].team.abbreviation;
-        // var vLogo = new Image(30,30);
-        // vLogo.src = game.competitions[0].competitors[1].team.logo;
+        var vLogo = new Image(30,30);
+        vLogo.src = game.competitions[0].competitors[1].team.logo;
         var vScore = game.competitions[0].competitors[1].score;
         var hTeam = game.competitions[0].competitors[0].team.abbreviation;
-        // var hLogo = new Image(30,30);
-        // hLogo.src = game.competitions[0].competitors[0].team.logo;
+        var hLogo = new Image(30,30);
+        hLogo.src = game.competitions[0].competitors[0].team.logo;
         var hScore = game.competitions[0].competitors[0].score;
-        // var startTime = game.competitions[0].status.type.detail;
-        // startTime = startTime.split('at ');
-        // startTime = startTime[1];
         var status = game.competitions[0].status.type.description;
+        if(status === "Scheduled") {
+          var startTime = game.competitions[0].status.type.detail;
+          startTime = startTime.split('at ');
+          startTime = startTime[1];
+          status = startTime;
+        }
         var total = parseInt(vScore) + parseInt(hScore);
         var quarter = game.competitions[0].status.period;
         var time = game.competitions[0].status.displayClock;
@@ -122,9 +126,11 @@ export default {
 
         try {
           ou = game.competitions[0].odds[0].overUnder;
+          // ou = game.competitions[0].odds.overUnder; // TESTING
         } catch(error) {
           try {
-            ou = this.games[i].ou;
+            var stored = this.openStorage();
+            ou = stored[i].ou;
           } catch(error) {
             ou = 0;
           }
@@ -137,7 +143,6 @@ export default {
           'at': '@',
           'hTeam': hTeam,
           'hScore': hScore,
-          // 'startTime': startTime,
           'quarter': quarter,
           'time': time,
           'total': total,
@@ -147,6 +152,7 @@ export default {
 
         this.$set(this.games, i, updated);
       }
+      this.saveStorage(this.games.slice(0));
     },
     getProjTotal(currTotal, quarter, time) {
       var min, sec, split;
@@ -169,7 +175,17 @@ export default {
       timeLeft += parseInt(min);
       var timePlayed = (parseInt(quarter)-1)*12+(12-timeLeft);
 
+      if(timePlayed === 0) {
+        return 0;
+      }
+
       return ((48/timePlayed)*(parseInt(currTotal))).toFixed(2);
+    },
+    openStorage() {
+      return JSON.parse(localStorage.getItem('games'));
+    },
+    saveStorage(games) {
+      localStorage.setItem('games', JSON.stringify(games));
     }
   }
 }
@@ -181,3 +197,5 @@ export default {
   padding-bottom: 2em;
 }
 </style>
+
+<!-- "odds":{"overUnder":"100"} -->
