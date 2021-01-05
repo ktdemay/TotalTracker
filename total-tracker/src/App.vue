@@ -36,7 +36,8 @@ export default {
       this.date = (pstDate.getMonth()+1) + "/" + pstDate.getDate() + '/' + pstDate.getFullYear();
       pstDate = pstDate.toISOString().split('T')[0].replace(/-/g, '');
 
-      var url = 'http://data.nba.net/10s/prod/v1/' + pstDate + '/scoreboard.json';
+      // var url = 'http://data.nba.net/10s/prod/v1/' + pstDate + '/scoreboard.json';
+      var url = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
 
       fetch(url, {
         method: 'get'
@@ -45,14 +46,15 @@ export default {
           return response.json()
         })
         .then((jsonData) => {
-          this.games = jsonData.games.slice(0);
-          console.log(this.games)
+          // this.games = jsonData.games.slice(0);
+          this.games = jsonData.events.slice(0);
+          console.log(this.games);
         })
     }
   },
   created: function() {
     this.update();
-    setInterval(this.update, 60000);
+    setInterval(this.update, 30000);
   }
 }
 </script>

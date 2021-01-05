@@ -10,7 +10,7 @@
       </p>
     </b-jumbotron>
 
-    <b-table striped hover :items="games" :fields="fields">
+    <b-table responsive striped hover :items="games" :fields="fields">
     </b-table>
   </div>
 </template>
@@ -24,6 +24,16 @@ export default {
   data: function() {
     return {
       fields: [
+          // {
+          //   key: 'startTime',
+          //   label: 'Start Time',
+          //   sortable: true
+          // },
+          {
+            key: 'status',
+            label: 'Status',
+            sortable: true
+          },
           {
             key: 'vTeam',
             label: 'Visitor',
@@ -50,14 +60,14 @@ export default {
             sortable: false
           },
           {
-            key: 'startTime',
-            label: 'Start Time',
-            sortable: true
+            key: 'quarter',
+            label: 'Quarter',
+            sortable: false
           },
           {
-            key: 'status',
-            label: 'Status',
-            sortable: true
+            key: 'time',
+            label: 'Time',
+            sortable: false
           },
           {
             key: 'total',
@@ -68,11 +78,12 @@ export default {
             key: 'projTotal',
             label: 'Projected Total',
             sortable: true
+          },
+          {
+            key: 'ou',
+            label: 'O/U',
+            sortable: true
           }
-          // {
-          //   key: 'Vegas Total',
-          //   sortable: true
-          // }
         ],
 
         games: []
@@ -91,52 +102,74 @@ export default {
       for(var i = 0; i < this.currGames.length; i++) {
         var game = this.currGames[i];
 
-        var vTeam = game.vTeam.triCode;
-        var vScore = game.vTeam.score;
-        var hTeam = game.hTeam.triCode;
-        var hScore = game.hTeam.score;
-        var startTime = game.startTimeEastern;
-        var status, total, projTotal;
-        switch (game.statusNum) {
-          case 1 : status = 'Not Yet Started'; total = 0; projTotal = 0; break;
-          case 2 : status = 'In Progress'; /* falls through */
-          case 3 : status = 'Finished'; /* falls through */
+        var vTeam = game.competitions[0].competitors[1].team.abbreviation;
+        // var vLogo = new Image(30,30);
+        // vLogo.src = game.competitions[0].competitors[1].team.logo;
+        var vScore = game.competitions[0].competitors[1].score;
+        var hTeam = game.competitions[0].competitors[0].team.abbreviation;
+        // var hLogo = new Image(30,30);
+        // hLogo.src = game.competitions[0].competitors[0].team.logo;
+        var hScore = game.competitions[0].competitors[0].score;
+        // var startTime = game.competitions[0].status.type.detail;
+        // startTime = startTime.split('at ');
+        // startTime = startTime[1];
+        var status = game.competitions[0].status.type.description;
+        var total = parseInt(vScore) + parseInt(hScore);
+        var quarter = game.competitions[0].status.period;
+        var time = game.competitions[0].status.displayClock;
+        var projTotal = this.getProjTotal(total, quarter, time);
+        var ou;
 
-          total = parseInt(vScore) + parseInt(hScore);
-          projTotal = this.getProjTotal(total, game.period.current, game.clock);
+        try {
+          ou = game.competitions[0].odds[0].overUnder;
+        } catch(error) {
+          try {
+            ou = this.games[i].ou;
+          } catch(error) {
+            ou = 0;
+          }
         }
 
-        this.games[i] = {
+        var updated = {
+          'status': status,
           'vTeam': vTeam,
           'vScore': vScore,
           'at': '@',
           'hTeam': hTeam,
           'hScore': hScore,
-          'startTime': startTime,
-          'status': status,
+          // 'startTime': startTime,
+          'quarter': quarter,
+          'time': time,
           'total': total,
-          'projTotal': projTotal
+          'projTotal': projTotal,
+          'ou': ou
         }
+
+        this.$set(this.games, i, updated);
       }
     },
     getProjTotal(currTotal, quarter, time) {
-      var min, sec;
-      if(time === '') {
-        min = 0;
-        sec = 0;
+      var min, sec, split;
+      if(quarter === 0) {
+        return 0; 
       }
-      else {
+      else if(time.includes(':')) {
         time = time.replace(' ', '');
-        var split = time.split(':');
+        split = time.split(':');
         min = split[0];
         sec = split[1];
+      }
+      else {
+        split = time.split('.');
+        min = 0;
+        sec = split[0];
       }
 
       var timeLeft = parseInt(sec)/60;
       timeLeft += parseInt(min);
       var timePlayed = (parseInt(quarter)-1)*12+(12-timeLeft);
 
-      return ((48/timePlayed)*(parseInt(currTotal)));
+      return ((48/timePlayed)*(parseInt(currTotal))).toFixed(2);
     }
   }
 }
