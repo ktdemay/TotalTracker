@@ -39,7 +39,7 @@ export default {
           return response.json()
         })
         .then((jsonData) => {
-          this.games = jsonData.events.slice(0);
+          this.games = jsonData.events;
           var date = jsonData.day.date.split('-');
           this.date = date[1] + '/' + date[2] + '/' + date[0];
         })

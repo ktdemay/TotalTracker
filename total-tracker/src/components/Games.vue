@@ -94,12 +94,12 @@ export default {
       }
     }
   },
-  created: function() {
-    const storedGames = this.openStorage();
-    if(storedGames) {
-      this.games = storedGames;
-    }
-  },
+  // created: function() {
+  //   const storedGames = this.openStorage();
+  //   if(storedGames) {
+  //     this.games = storedGames;
+  //   }
+  // },
   mounted: function() {
     this.addLogos();
   },
@@ -171,6 +171,7 @@ export default {
         this.$set(this.games, i, updated);
       }
 
+      // console.log(this.games.slice(0, this.currGames.length));
       this.saveStorage(this.games.slice(0, this.currGames.length));
     },
     getProjTotal(currTotal, quarter, time) {
@@ -209,7 +210,7 @@ export default {
     changed(entry, index) {
       var cellVariants = {};
       var storedGames = this.openStorage();
-      if(storedGames[index] !== null) {
+      if(typeof storedGames[index] !== 'undefined') {
         var game = storedGames[index];
         var changed = false;
 
