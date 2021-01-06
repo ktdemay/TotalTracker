@@ -29,13 +29,6 @@ export default {
   },
   methods: {
     update() {
-      var date = new Date();
-      var utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-      utcDate.setHours(utcDate.getHours()-16);
-      var adjDate = new Date(utcDate);
-      this.date = (adjDate.getMonth()+1) + "/" + adjDate.getDate() + '/' + adjDate.getFullYear();
-      adjDate = adjDate.toISOString().split('T')[0].replace(/-/g, '');
-
       var url = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
       // var url = 'http://localhost:8080/test.json' // TESTING
 
@@ -47,7 +40,8 @@ export default {
         })
         .then((jsonData) => {
           this.games = jsonData.events.slice(0);
-          // console.log(this.games);
+          var date = jsonData.day.date.split('-');
+          this.date = date[1] + '/' + date[2] + '/' + date[0];
         })
     }
   },
@@ -66,5 +60,15 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%
 }
 </style>

@@ -12,6 +12,7 @@
 
     <b-table responsive striped hover :items="games" :fields="fields">
     </b-table>
+    <p class="left"><em>Games update every 30 seconds</em></p>
   </div>
 </template>
 
@@ -254,7 +255,6 @@ export default {
     },
     addLogos() {
       var table = document.getElementsByTagName('tbody');
-      console.log(table[0].children);
 
       for(var i = 0; i < table[0].children.length; i++) {
         var row = table[0].children[i];
@@ -279,6 +279,16 @@ export default {
 @keyframes table-update {
   0% {
     background-color: #5cb85c;
+  }
+}
+
+.left {
+  text-align: left;
+}
+
+@media only screen and (max-width: 500px) {
+	.display-3 {
+    font-size: 50px;
   }
 }
 </style>
