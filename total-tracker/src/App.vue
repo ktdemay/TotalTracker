@@ -30,11 +30,11 @@ export default {
   methods: {
     update() {
       var date = new Date();
-      var utcDate = new Date(date.toUTCString());
-      utcDate.setHours(utcDate.getHours()-8);
-      var pstDate = new Date(utcDate);
-      this.date = (pstDate.getMonth()+1) + "/" + pstDate.getDate() + '/' + pstDate.getFullYear();
-      pstDate = pstDate.toISOString().split('T')[0].replace(/-/g, '');
+      var utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      utcDate.setHours(utcDate.getHours()-16);
+      var adjDate = new Date(utcDate);
+      this.date = (adjDate.getMonth()+1) + "/" + adjDate.getDate() + '/' + adjDate.getFullYear();
+      adjDate = adjDate.toISOString().split('T')[0].replace(/-/g, '');
 
       var url = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
       // var url = 'http://localhost:8080/test.json' // TESTING

@@ -10,7 +10,7 @@
       </p>
     </b-jumbotron>
 
-    <b-table ref="table" responsive striped hover :items="games" :fields="fields">
+    <b-table responsive striped hover :items="games" :fields="fields">
     </b-table>
   </div>
 </template>
@@ -81,7 +81,8 @@ export default {
           }
         ],
 
-        games: []
+        games: [],
+        logos: []
     }
   },
   watch: {
@@ -98,17 +99,22 @@ export default {
       this.games = storedGames;
     }
   },
+  mounted: function() {
+    this.addLogos();
+  },
   methods: {
     updateGames() {
       for(var i = 0; i < this.currGames.length; i++) {
         var game = this.currGames[i];
 
-        var vTeam = game.competitions[0].competitors[1].team.abbreviation;
+        var vTeam = game.competitions[0].competitors[1].team.abbreviation + " ";
         var vLogo = new Image(30,30);
         vLogo.src = game.competitions[0].competitors[1].team.logo;
+        this.logos.push(vLogo);
         var vScore = game.competitions[0].competitors[1].score;
-        var hTeam = game.competitions[0].competitors[0].team.abbreviation;
+        var hTeam = game.competitions[0].competitors[0].team.abbreviation + " ";
         var hLogo = new Image(30,30);
+        this.logos.push(hLogo);
         hLogo.src = game.competitions[0].competitors[0].team.logo;
         var hScore = game.competitions[0].competitors[0].score;
         var status = game.competitions[0].status.type.description;
@@ -163,7 +169,8 @@ export default {
 
         this.$set(this.games, i, updated);
       }
-      this.saveStorage(this.games.slice(0));
+
+      this.saveStorage(this.games.slice(0, this.currGames.length));
     },
     getProjTotal(currTotal, quarter, time) {
       var min, sec, split;
@@ -239,12 +246,21 @@ export default {
         }
         
         if(changed) {
-          console.log(cellVariants);
           return cellVariants;
         }
       }
 
       return null;
+    },
+    addLogos() {
+      var table = document.getElementsByTagName('tbody');
+      console.log(table[0].children);
+
+      for(var i = 0; i < table[0].children.length; i++) {
+        var row = table[0].children[i];
+        row.cells[1].appendChild(this.logos[i*2]);
+        row.cells[4].appendChild(this.logos[i*2+1]);
+      }
     }
   }
 }
