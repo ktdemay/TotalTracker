@@ -79,7 +79,12 @@ export default {
             key: 'ou',
             label: 'O/U',
             sortable: true
-          }
+          },
+          // {
+          //   key: 'fullGame',
+          //   label: 'Full Game Info',
+          //   sortable: true
+          // }
         ],
 
         games: [],
@@ -94,12 +99,6 @@ export default {
       }
     }
   },
-  // created: function() {
-  //   const storedGames = this.openStorage();
-  //   if(storedGames) {
-  //     this.games = storedGames;
-  //   }
-  // },
   mounted: function() {
     this.addLogos();
   },
@@ -133,6 +132,7 @@ export default {
         var time = game.competitions[0].status.displayClock;
         var projTotal = this.getProjTotal(total, quarter, time);
         var ou;
+        // var fullGame = game.links[0].href;
 
         try {
           ou = game.competitions[0].odds[0].overUnder;
@@ -158,6 +158,7 @@ export default {
           'total': total,
           'projTotal': projTotal,
           'ou': ou,
+          // 'fullGame': fullGame,
           _cellVariants: {}
         }
 
@@ -176,10 +177,15 @@ export default {
     },
     getProjTotal(currTotal, quarter, time) {
       var min, sec, split;
+      var totalTime = 48;
       if(quarter === 0) {
         return 0; 
       }
-      else if(time.includes(':')) {
+      else if(quarter > 4) {
+        totalTime = totalTime + (5*(quarter-4))
+      }
+      
+      if(time.includes(':')) {
         time = time.replace(' ', '');
         split = time.split(':');
         min = split[0];
@@ -199,7 +205,7 @@ export default {
         return 0;
       }
 
-      return ((48/timePlayed)*(parseInt(currTotal))).toFixed(2);
+      return ((totalTime/timePlayed)*(parseInt(currTotal))).toFixed(2);
     },
     openStorage() {
       return JSON.parse(localStorage.getItem('games'));

@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <b-container>
+    <Header />
+    <b-container class="games">
       <b-row>
         <b-col>
           <Games 
@@ -16,10 +17,12 @@
 
 <script>
 import Games from './components/Games.vue';
+import Header from './components/Header.vue';
 export default {
   name: 'app',
   components: {
-    Games
+    Games,
+    Header
   },
   data() {
     return {
@@ -40,6 +43,7 @@ export default {
         })
         .then((jsonData) => {
           this.games = jsonData.events;
+          console.log(this.games);
           var date = jsonData.day.date.split('-');
           this.date = date[1] + '/' + date[2] + '/' + date[0];
         })
@@ -59,7 +63,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 
 html {
@@ -70,5 +73,9 @@ html {
 body {
     overflow-x: hidden;
     width: 100%
+}
+
+.games {
+  margin-top: 20px;
 }
 </style>
