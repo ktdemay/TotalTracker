@@ -126,9 +126,6 @@ export default {
         }
         var total = parseInt(vScore) + parseInt(hScore);
         var quarter = game.competitions[0].status.period;
-        if(quarter > 4) {
-          quarter = 4;
-        }
         var time = game.competitions[0].status.displayClock;
         var projTotal = this.getProjTotal(total, quarter, time);
         var ou;
@@ -176,15 +173,12 @@ export default {
       this.saveStorage(this.games.slice(0, this.currGames.length));
     },
     getProjTotal(currTotal, quarter, time) {
-      var min, sec, split;
+      var min, sec, split, timePlayed;
       var totalTime = 48;
       if(quarter === 0) {
         return 0; 
       }
-      else if(quarter > 4) {
-        totalTime = totalTime + (5*(quarter-4))
-      }
-      
+
       if(time.includes(':')) {
         time = time.replace(' ', '');
         split = time.split(':');
@@ -199,7 +193,14 @@ export default {
 
       var timeLeft = parseInt(sec)/60;
       timeLeft += parseInt(min);
-      var timePlayed = (parseInt(quarter)-1)*12+(12-timeLeft);
+
+      if(quarter > 4) {
+        totalTime = totalTime + (5*(quarter-4));
+        timePlayed = 48+(5*(quarter-4)-timeLeft);
+      }
+      else {
+        timePlayed = (parseInt(quarter)-1)*12+(12-timeLeft);
+      }
 
       if(timePlayed === 0) {
         return 0;
