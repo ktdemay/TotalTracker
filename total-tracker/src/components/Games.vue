@@ -28,7 +28,7 @@ export default {
           {
             key: 'status',
             label: 'Status',
-            sortable: true
+            sortable: false
           },
           {
             key: 'vTeam',
@@ -73,12 +73,12 @@ export default {
           {
             key: 'projTotal',
             label: 'Projected Total',
-            sortable: true
+            sortable: false
           },
           {
             key: 'ou',
             label: 'O/U',
-            sortable: true
+            sortable: false
           },
           {
             key: 'notes',
