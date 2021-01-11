@@ -80,6 +80,11 @@ export default {
             label: 'O/U',
             sortable: true
           },
+          {
+            key: 'notes',
+            label: 'Notes',
+            sortable: false
+          },
           // {
           //   key: 'fullGame',
           //   label: 'Full Game Info',
@@ -88,7 +93,8 @@ export default {
         ],
 
         games: [],
-        logos: []
+        logos: [],
+        gameNotes: []
     }
   },
   watch: {
@@ -129,19 +135,28 @@ export default {
         var time = game.competitions[0].status.displayClock;
         var projTotal = this.getProjTotal(total, quarter, time);
         var ou;
+        var notes;
         // var fullGame = game.links[0].href;
 
+        var stored = this.openStorage();
         try {
           ou = game.competitions[0].odds[0].overUnder;
           // ou = game.competitions[0].odds.overUnder; // TESTING
         } catch(error) {
           try {
-            var stored = this.openStorage();
             ou = stored[i].ou;
           } catch(error) {
             ou = 0;
           }
         }
+
+        try {
+          notes = stored[i].notes;
+        } catch(error) {
+          notes = '';
+        }
+
+        this.gameNotes = notes;
 
         var updated = {
           'status': status,
@@ -155,6 +170,7 @@ export default {
           'total': total,
           'projTotal': projTotal,
           'ou': ou,
+          'notes': '',
           // 'fullGame': fullGame,
           _cellVariants: {}
         }
@@ -268,10 +284,27 @@ export default {
         var row = table[0].children[i];
         row.cells[1].appendChild(this.logos[i*2]);
         row.cells[4].appendChild(this.logos[i*2+1]);
+
+        var notes = document.createElement("TEXTAREA");
+        // notes.addEventListener('change', this.updateNotes());
+        row.cells[11].appendChild(notes);
       }
-    }
-  }
+    },
+    // updateNotes() {
+    //   var table = document.getElementsByTagName('tbody');
+
+    //   for(var i = 0; i < table[0].children.length; i++) {
+    //     var row = table[0].children[i];
+    //     var notes = row.cells[11].children.value;
+    //     console.log(notes);
+    //     this.games[i].notes = notes;
+    //     // this.saveStorage(this.games.slice(0, this.currGames.length));
+    //   }
+    // }
+  },
 }
+
+
 </script>
 
 <style>
@@ -282,6 +315,10 @@ export default {
 
 .table-update {
   animation: 2s table-update;
+}
+
+textarea {
+  width: 100px;
 }
 
 @keyframes table-update {
