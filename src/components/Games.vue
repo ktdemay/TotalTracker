@@ -103,6 +103,11 @@ export default {
       handler() {
         this.updateGames();
       }
+    },
+    currDate: {
+      handler() {
+        this.addLogos();
+      }
     }
   },
   mounted: function() {
