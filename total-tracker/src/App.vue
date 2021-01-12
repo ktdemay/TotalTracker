@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     update() {
-      var url = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
+      var url = 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard'
       // var url = 'http://localhost:8080/test.json' // TESTING
 
       fetch(url, {

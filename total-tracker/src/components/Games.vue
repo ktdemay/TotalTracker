@@ -233,7 +233,7 @@ export default {
     changed(entry, index) {
       var cellVariants = {};
       var storedGames = this.openStorage();
-      if(typeof storedGames[index] !== 'undefined') {
+      if(storedGames !== null && typeof storedGames[index] !== 'undefined') {
         var game = storedGames[index];
         var changed = false;
 
