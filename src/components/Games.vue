@@ -106,6 +106,7 @@ export default {
     },
     currDate: {
       handler() {
+        location.reload();
         this.addLogos();
       }
     }
